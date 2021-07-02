@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>COVID TRACK</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    </head>
+
+
+    <body>
+        <div class="container">
+            <h1 class="text-center mt -5">Covid Live Data</h1>
+            <br>
+            <br>
+            
+            <table class="table table-hover">
+                <tr>
+                    <th>Entire World Data</th>
+                </tr>
+                <tr>
+                    <th>Total case</th>
+                    <th>Total Recover</th>
+                    <th>Total Deaths</th>
+                    <th>Percentage Recovered</th>
+                </tr>
+                <tr id="worldData">
+
+                </tr>
+            </table>
+
+            <br>
+            <br>
+            <form id="myform">
+                <select id="selectcountry" onchange="worldcountriesdata()">
+                    <option>Choose the Country</option>
+                </select>
+            </form>
+            <br>
+            <br>
+
+
+            <table class="table table-hover">
+                <tr>
+                    <th>Country Data</th>
+                </tr>
+                <tr>
+                    <th>Total case</th>
+                    <th>Total Recover</th>
+                    <th>Total Deaths</th>
+                    <th>Percentage Recovered</th>
+                </tr>
+                <tr id="country">
+
+                </tr>
+            </table>
+            
+
+        </div>
+        <footer>
+            <p id="sentence">Stay Home Stay Safe</p>
+        </footer>
+       
+
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        var worlData=''
+        var country=''
+        worldInit()
+        worldcountries()
+        function worldInit(){
+            var url ="https://api.covid19api.com/summary"
+
+
+            $.get(url,function(worldData){
+                percentageOfWorldRecovery=(worldData.Global.TotalRecovered/worldData.Global.TotalConfirmed)*100
+                worldData=`
+                <td>${worldData.Global.TotalConfirmed}</td>
+                <td>${worldData.Global.TotalRecovered}</td>
+                <td>${worldData.Global.TotalDeaths}</td>
+                <td>${percentageOfWorldRecovery}</td>`
+                $("#worldData").html(worldData)
+
+
+            })           
+
+
+        }
+        async function worldcountries(){
+            var url="https://api.covid19api.com/countries"
+            $.get(url,function(country){
+           for(var noofcountry=0;noofcountry<=country.length-1;noofcountry++){
+               $("#selectcountry").append("<option value ="+country[noofcountry].Country+">"+country[noofcountry].Country+"</option>")
+           }
+            })
+        }
+
+        function worldcountriesdata(){
+            var url ="https://api.covid19api.com/summary"
+
+
+            $.get(url,function(country){
+
+                for(var count=0;count<=country.Countries.length;count++){
+                    var selected =$("#selectcountry").find('option:selected').text()
+                    if(country.Countries[count].Country == selected){
+
+                 
+             
+                        percentageOfCountryRecovery=(country.Countries[count].TotalRecovered/country.Countries[count].TotalConfirmed)*100
+                        country=`
+                        <td>${country.Countries[count].TotalConfirmed}</td>
+                        <td>${country.Countries[count].TotalRecovered}</td>
+                        <td>${country.Countries[count].TotalDeaths}</td>
+                        <td>${percentageOfCountryRecovery}</td>`
+                        $("#country").html(country)
+                    break;
+                }
+
+                }
+            })
+           
+
+
+        }
+        
+
+    </script>
+
+</html>
